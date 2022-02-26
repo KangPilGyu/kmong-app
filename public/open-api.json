@@ -1,0 +1,748 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Kmong-App API",
+        "version": "0.1"
+    },
+    "servers": [
+        {
+            "url": "http://localhost.com"
+        }
+    ],
+    "paths": {
+        "/api/v1/auth/token": {
+            "post": {
+                "tags": [
+                    "인증"
+                ],
+                "summary": "로그인",
+                "description": "로그인 API",
+                "operationId": "AuthenticationController#login",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "회원가입 성공",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "access_token": {
+                                            "description": "token",
+                                            "type": "string"
+                                        },
+                                        "token_type": {
+                                            "description": "token_type",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Untitiy Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Exception422"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authorization Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "에러 메시지",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "인증"
+                ],
+                "summary": "로그아웃",
+                "description": "로그아웃 API",
+                "operationId": "AuthenticationController#logout",
+                "responses": {
+                    "200": {
+                        "description": "로그아웃 성공"
+                    },
+                    "422": {
+                        "description": "Untitiy Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Exception422"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authorization Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "에러 메시지",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users": {
+            "post": {
+                "tags": [
+                    "인증"
+                ],
+                "summary": "회원 가입",
+                "description": "회원가입 API",
+                "operationId": "UserController#create",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "description": "대/소문자/숫자/특수문자 1개 이상 포함, 10자리 이상",
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "회원가입 성공",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "access_token": {
+                                            "description": "token",
+                                            "type": "string"
+                                        },
+                                        "token_type": {
+                                            "description": "token_type",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Untitiy Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Exception422"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authorization Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "에러 메시지",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/orders": {
+            "get": {
+                "tags": [
+                    "주문"
+                ],
+                "summary": "주문 조회",
+                "description": "주문 조회 API",
+                "operationId": "OrderController#list",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "limit": {
+                                        "description": "pagnation limit",
+                                        "type": "number"
+                                    },
+                                    "page": {
+                                        "description": "pagnation page",
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "주문 조회 성공 (with User, Product)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Order"
+                                            }
+                                        },
+                                        "current_page": {
+                                            "type": "number"
+                                        },
+                                        "per_page": {
+                                            "type": "number"
+                                        },
+                                        "total": {
+                                            "type": "number"
+                                        },
+                                        "last_page": {
+                                            "type": "number"
+                                        },
+                                        "path": {
+                                            "type": "string",
+                                            "format": "url"
+                                        },
+                                        "first_page_url": {
+                                            "type": "string",
+                                            "format": "url"
+                                        },
+                                        "last_page_url": {
+                                            "type": "string",
+                                            "format": "url"
+                                        },
+                                        "prev_page_url": {
+                                            "type": "string",
+                                            "format": "url"
+                                        },
+                                        "next_page_url": {
+                                            "type": "string",
+                                            "format": "url"
+                                        },
+                                        "from": {
+                                            "type": "number"
+                                        },
+                                        "to": {
+                                            "type": "number"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Untitiy Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Exception422"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authorization Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "에러 메시지",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "주문"
+                ],
+                "summary": "주문 생성",
+                "description": "주문 생성 API",
+                "operationId": "OrderController#create",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "product_id": {
+                                        "description": "상품 ID",
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "주문 생성 성공 (with User, Product)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "order": {
+                                            "$ref": "#/components/schemas/Order"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Untitiy Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Exception422"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authorization Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "에러 메시지",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/products": {
+            "get": {
+                "tags": [
+                    "상품"
+                ],
+                "summary": "상품 조회",
+                "description": "상품 조회 API",
+                "operationId": "ProductControllers#list",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "product_query": {
+                                        "description": "이름 검색어",
+                                        "type": "string"
+                                    },
+                                    "limit": {
+                                        "description": "pagnation limit",
+                                        "type": "number"
+                                    },
+                                    "page": {
+                                        "description": "pagnation page",
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "상품 조회 성공 (with User)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Product"
+                                            }
+                                        },
+                                        "current_page": {
+                                            "type": "number"
+                                        },
+                                        "per_page": {
+                                            "type": "number"
+                                        },
+                                        "total": {
+                                            "type": "number"
+                                        },
+                                        "last_page": {
+                                            "type": "number"
+                                        },
+                                        "path": {
+                                            "type": "string",
+                                            "format": "url"
+                                        },
+                                        "first_page_url": {
+                                            "type": "string",
+                                            "format": "url"
+                                        },
+                                        "last_page_url": {
+                                            "type": "string",
+                                            "format": "url"
+                                        },
+                                        "prev_page_url": {
+                                            "type": "string",
+                                            "format": "url"
+                                        },
+                                        "next_page_url": {
+                                            "type": "string",
+                                            "format": "url"
+                                        },
+                                        "from": {
+                                            "type": "number"
+                                        },
+                                        "to": {
+                                            "type": "number"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Untitiy Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Exception422"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authorization Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "에러 메시지",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "상품"
+                ],
+                "summary": "상품 생성",
+                "description": "상품 생성 API",
+                "operationId": "ProductController#create",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "product_name": {
+                                        "description": "상품명",
+                                        "type": "string"
+                                    },
+                                    "product_price": {
+                                        "description": "상품가격",
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "상품 생성 성공",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "product": {
+                                            "$ref": "#/components/schemas/Product"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Untitiy Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Exception422"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authorization Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "에러 메시지",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerToken": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Exception422": {
+                "title": "422 Exception",
+                "description": "422 Exception",
+                "properties": {
+                    "errors": {
+                        "schema": "BaseFormRequest",
+                        "description": "error_keys",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "key": {
+                                    "description": "error_key",
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "description": "error_message",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "message": {
+                        "schema": "BaseFormRequest",
+                        "description": "error_message",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Order": {
+                "title": "Order model",
+                "description": "Order model",
+                "properties": {
+                    "id": {
+                        "schema": "Order",
+                        "description": "ID",
+                        "type": "number"
+                    },
+                    "product_id": {
+                        "schema": "Order",
+                        "description": "상품 ID",
+                        "type": "number"
+                    },
+                    "user_id": {
+                        "schema": "Order",
+                        "description": "유저 ID",
+                        "type": "number"
+                    },
+                    "created_at": {
+                        "schema": "Order",
+                        "description": "created_at",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "schema": "Order",
+                        "description": "updated_at",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Product": {
+                "title": "Product model",
+                "description": "Product model",
+                "properties": {
+                    "id": {
+                        "schema": "Product",
+                        "description": "ID",
+                        "type": "number"
+                    },
+                    "product_name": {
+                        "schema": "Product",
+                        "description": "상품명",
+                        "type": "string"
+                    },
+                    "product_price": {
+                        "schema": "Product",
+                        "description": "상품가격 (단위: won)",
+                        "type": "number"
+                    },
+                    "created_at": {
+                        "schema": "Product",
+                        "description": "created_at",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "schema": "Product",
+                        "description": "updated_at",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "title": "User model",
+                "description": "User model",
+                "properties": {
+                    "id": {
+                        "schema": "User",
+                        "description": "ID",
+                        "type": "number"
+                    },
+                    "email": {
+                        "schema": "User",
+                        "description": "email",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "schema": "User",
+                        "description": "created_at",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "schema": "User",
+                        "description": "updated_at",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "BearerToken": {
+                "type": "http",
+                "description": "Token을 이용한 인증 방식입니다.",
+                "name": "Bearer Tokan Authentication",
+                "in": "header",
+                "bearerFormat": "Authorization: Bearer <token>",
+                "scheme": "bearer"
+            }
+        }
+    }
+}
